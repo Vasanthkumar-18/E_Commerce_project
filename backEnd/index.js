@@ -2,11 +2,15 @@ import express from "express";
 import pg from "pg";
 import env from "dotenv";
 import bodyParser from "body-parser";
+import bcrypt, { hash } from "bcrypt";
 
 const app = express();
 const port = 4000;
+
 env.config();
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const saltRound = 10;
 const db = new pg.Client({
   user: process.env.PG_USER,
   password: process.env.PG_PASSWORD,
@@ -137,21 +141,76 @@ app.delete("/api/products/:id", async (req, res) => {
 });
 
 // USERS SERVER RESPONSE
-app.post("/login", (req, res) => {
+
+app.post("/api/user/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
     if (name && email && password) {
-      const details = [name, email, password]
-      res.json(details);
+      const checkEmail = await db.query(
+        "SELECT * FROM users WHERE email = $1",
+        [email]
+      );
+      if (checkEmail.rows.length > 0) {
+        res.status(404).json({ message: "User Email already Exists" });
+      } else {
+        // Password Hashing
+        bcrypt.hash(password, saltRound, async (err, hash) => {
+          if (err) {
+            console.log("Error Hashing password :", err);
+          } else {
+            const registerUser = await db.query(
+              "INSERT INTO users (name, email, password) VALUES ( $1, $2, $3 ) ",
+              [name, email, hash]
+            );
+            res.status(201).json("User Created Successfully");
+          }
+        });
+      }
+    } else {
+      res.status(404).json({ error: "some detail Required" });
     }
   } catch (err) {
-    console.error(err);
+    console.error(err.stack);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+app.post("/api/user/login", async (req, res) => {
+  try {
+    const { email, loginPassword } = req.body;
+    if (email && loginPassword) {
+      const checkUserDetails = await db.query(
+        "SELECT * FROM users WHERE email = $1",
+        [email]
+      );
+      if (checkUserDetails.rows.length > 0) {
+        const user = checkUserDetails.rows[0];
 
-app.post("register", (res, req) => {});
+        const storedHashedPassword = user.password;
+
+        bcrypt.compare(loginPassword, storedHashedPassword, (err, result) => {
+          if (err) {
+            console.log("Error Comparing Password :", err);
+          } else {
+            if (result) {
+              res
+                .status(200)
+                .json({ message: " Welcome to Ecommerce Website" });
+            } else {
+              res.status(404).json({ error: " password Wrong" });
+            }
+          }
+        });
+      } else {
+        res.status(404).json({ error: "email is not found" });
+      }
+    } else {
+      res.status(404).json({ error: "email & passsword Required" });
+    }
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.all("*", (req, res) => {
   res.status(404).json({ error: "Route not found or Page not found" });
