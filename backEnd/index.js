@@ -2,7 +2,9 @@ import express from "express";
 import pg from "pg";
 import env from "dotenv";
 import bodyParser from "body-parser";
-import bcrypt, { hash } from "bcrypt";
+import bcrypt from "bcrypt";
+// import GoogleStrategy from "passport-google-oauth";
+import passport from "passport";
 
 const app = express();
 const port = 4000;
@@ -211,13 +213,48 @@ app.post("/api/user/login", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
+// auth google
+// app.get("/auth/google", passport.authenticate("google", {
+//   scope : ["profile", "email"],
+// }));
+// app.get("/auth/google/secrets" , passport.authenticate("google", {
+//   // successRedirect : "",
+//   // failureRedirect : ""
+// }));
 app.all("*", (req, res) => {
   res.status(404).json({ error: "Route not found or Page not found" });
 });
 app.get("/", (req, res) => {
   res.send("<h1> THIS IS SERVER SIDE LOGICS</h1>");
 });
+// passport.use(
+//   "google",
+//    new GoogleStrategy(
+//     {
+//       clientId: process.env.OAUTH_CLIENT_ID,
+//       clientSecret: process.env.OAUTH_CLIENT_SECRET,
+//       callbackURL: "http://localhost:4000/auth/google/secrets",
+//       useProfileURL: "http://www.googleapis.com/oauth2/v3/userinfo",
+//     },
+//     async (accessToken, refreshToken, profile, cb) => {
+//       try{
+//         const result = await db.query("SELECT * FROM users WHERE email = $1", [profile.email]);
+//         if(result.rows.length > 0 ){
+//           // res.status(404).json({ error : "user email already exists"});
+//           cb (null, result.rows[0])
+//         } else{
+//           const newUser = await db.query("INSERT INTO users (email, password) VALUES ($1, $2)", [profile.email, "google"]);
+//           cb (null , newUser.rows[0])
+//         }
+//       } catch (err) {
+
+//         // res.send(500).json({error : "SERVER ERROR "})
+//         cb(err)
+
+//       }
+//     }  
+//   )
+// );
 
 app.listen(port, () => {
   console.log(`The Server running port is ${port}/`);
