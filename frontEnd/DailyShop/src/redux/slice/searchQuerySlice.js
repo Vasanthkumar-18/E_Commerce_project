@@ -6,7 +6,7 @@ const searchQuerySlice = createSlice({
     reducers : {
         queryValue(state, action) {
 
-            state.push(action.payload)
+            state.unshift(action.payload)
 
         },
     },

@@ -5,14 +5,16 @@ import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
 // import GoogleStrategy from "passport-google-oauth";
 // import passport from "passport";
-import cors from "cors"
+import cors from "cors";
 
 const app = express();
 const port = 4000;
-app.use(cors({
-  origin : "http://localhost:5173",
-  methods : ["GET", "POST", "PATCH", "DELETE"],
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+  })
+);
 env.config();
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -25,7 +27,7 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
 });
 db.connect();
-
+app.use(express.json());
 // PRODUCTS SERVER RESPONSE
 
 app.get("/products", async (req, res) => {
@@ -225,11 +227,25 @@ app.post("/user/login", async (req, res) => {
 //   // successRedirect : "",
 //   // failureRedirect : ""
 // }));
-app.all("*", (req, res) => {
-  res.status(404).json({ error: "Route not found or Page not found" });
-});
+
 app.get("/", (req, res) => {
   res.send("<h1> THIS IS SERVER SIDE LOGICS</h1>");
+});
+app.post("/search/product", async (req, res) => {
+  try {
+    const query = req.body.query;
+
+    const result = await db.query(
+      "SELECT * FROM products WHERE title ILIKE $1",
+      [`%${query}%`]
+    );
+    console.log(result.rows);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: "Error Searching Products" });
+  }
 });
 // passport.use(
 //   "google",
@@ -256,10 +272,14 @@ app.get("/", (req, res) => {
 //         cb(err)
 
 //       }
-//     }  
+//     }
 //   )
 // );
 
+
+app.all("*", (req, res) => {
+  res.status(404).json({ error: "Route not found or Page not found" });
+});
 app.listen(port, () => {
   console.log(`The Server running port is ${port}/`);
 });

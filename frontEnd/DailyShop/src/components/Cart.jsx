@@ -14,17 +14,19 @@ const Cart = () => {
       <div className="cartContainer">
         {cartProducts.map((product) => {
           return (
-            <div className="cartItems" key={product.id}>
-              <img src={product.image_url} alt="" />
-              <p className="cartTitle">{product.title}</p>
-              <div className="cartCount">
-                <button>-</button>
-                <p>0</p>
-                <button style={{ backgroundColor: "green" }}>+</button>
-                <p>Total :{product.price} </p>
+            <>
+              <div className="cartItems" key={product.id}>
+                <img src={product.image_url} alt="" />
+                <p className="cartTitle">{product.title}</p>
+                <div className="cartCount">
+                  <button>-</button>
+                  <p>0</p>
+                  <button style={{ backgroundColor: "green" }}>+</button>
+                  <p>Total :{product.price} </p>
+                </div>
+                <button className="cartPayment">Payment</button>
               </div>
-              <button className="cartPayment">Payment</button>
-            </div>
+            </>
           );
         })}
       </div>

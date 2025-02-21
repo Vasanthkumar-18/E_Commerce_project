@@ -6,6 +6,7 @@ import Cart from "./components/Cart";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ProductDetails from "./components/ProductDetails";
+import Serachbox from "./components/Searchbox";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/search" element={<Serachbox />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </Router>

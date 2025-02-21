@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 const AllProducts = () => {
-  const [product, setProduct] = useState();
+  const [product, setProduct] = useState([]);
   const [filterProduct, setFilterProduct] = useState();
   const [isLoad, setIsLoad] = useState(true);
   const [error, setError] = useState("");
@@ -29,12 +29,6 @@ const AllProducts = () => {
     getAllProducts();
   }, []);
 
-  const searchData = useSelector((state) => {
-    return state.searchQuery;
-  });
-  console.log(searchData);
-
-  console.log(data);
 
   if (isLoad) {
     return (
