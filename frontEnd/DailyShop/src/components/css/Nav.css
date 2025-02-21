@@ -1,0 +1,123 @@
+nav {
+  display: flex;
+  height: 70px;
+  width: 100%;
+  background-color: aqua;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 500;
+  background-color: lightgreen;
+  position: fixed;
+  top: 0px;
+}
+nav Link{
+  text-decoration: none;
+
+}
+.logo {
+  height: 100%;
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.serachsection {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.searchBox {
+  border: 1px solid black;
+  outline: none;
+  width: 90%;
+  padding: 0.6rem;
+  border-radius: 5px;
+  flex-shrink: 0;
+  padding-left: 60px;
+}
+.searchIcon {
+  margin-right: -40px;
+  z-index: 301;
+}
+.serachsection input {
+  text-decoration: none;
+}
+.rightSection {
+  height: 100%;
+  width: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  text-align: center;
+}
+.cartbtn {
+  background-color: orange;
+  border-radius: 4px;
+  display: flex;
+  padding: 4px;
+}
+.login,
+.logout {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.icon {
+  height: 25px;
+  width: 25px;
+  cursor: pointer;
+}
+.icon:hover{
+  opacity: 0.6;
+}
+.rightSection p {
+  font-size: 10px;
+  cursor: default;
+}
+@media screen and (max-width: 540px) {
+  nav {
+    height: 40px;
+  }
+  .serachsection {
+    position: absolute;
+    height: 40px;
+    top: 40px;
+    left: 0px;
+    width: 100%;
+    z-index: 100;
+    background-color: white;
+    padding: 25px 0;
+  }
+  .searchBox {
+    border: 2px solid lightgreen;
+    font-size: 13px;
+    background-color: white;
+  }
+  .logo {
+    width: 50%;
+  }
+  .logo h4 {
+    font-size: 1rem;
+    margin: 0;
+  }
+  .rightSection {
+    font-size: 20px;
+    width: 50%;
+  }
+  .rightSection p {
+    font-size: 7px;
+  }
+
+  .icon {
+    height: 16px;
+    width: 16px;
+  }
+}

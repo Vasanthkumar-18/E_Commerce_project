@@ -4,11 +4,15 @@ import env from "dotenv";
 import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
 // import GoogleStrategy from "passport-google-oauth";
-import passport from "passport";
+// import passport from "passport";
+import cors from "cors"
 
 const app = express();
 const port = 4000;
-
+app.use(cors({
+  origin : "http://localhost:5173",
+  methods : ["GET", "POST", "PATCH", "DELETE"],
+}));
 env.config();
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -24,7 +28,7 @@ db.connect();
 
 // PRODUCTS SERVER RESPONSE
 
-app.get("/api/products", async (req, res) => {
+app.get("/products", async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM products ORDER BY id ASC");
     if (result) {
@@ -35,7 +39,7 @@ app.get("/api/products", async (req, res) => {
     res.status(500).json({ error: "SERVER ERROR" });
   }
 });
-app.get("/api/products/:id", async (req, res) => {
+app.get("/products/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const result = await db.query("SELECT * FROM products WHERE id = $1", [id]);
@@ -51,7 +55,7 @@ app.get("/api/products/:id", async (req, res) => {
   }
 });
 
-app.post("/api/products", async (req, res) => {
+app.post("/products", async (req, res) => {
   try {
     const { title, description, price, image_URL, product_id } = req.body;
     const UpperProductId = product_id.toUpperCase();
@@ -82,7 +86,7 @@ app.post("/api/products", async (req, res) => {
   }
 });
 
-app.put("/api/products/:id", async (req, res) => {
+app.put("/products/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, price, image, product_id } = req.body;
@@ -116,7 +120,7 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/products/:id", async (req, res) => {
+app.delete("/products/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -144,7 +148,7 @@ app.delete("/api/products/:id", async (req, res) => {
 
 // USERS SERVER RESPONSE
 
-app.post("/api/user/register", async (req, res) => {
+app.post("/user/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (name && email && password) {
@@ -176,7 +180,7 @@ app.post("/api/user/register", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-app.post("/api/user/login", async (req, res) => {
+app.post("/user/login", async (req, res) => {
   try {
     const { email, loginPassword } = req.body;
     if (email && loginPassword) {
