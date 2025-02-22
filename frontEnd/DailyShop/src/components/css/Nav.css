@@ -10,9 +10,8 @@ nav {
   position: fixed;
   top: 0px;
 }
-nav Link{
+nav Link {
   text-decoration: none;
-
 }
 .logo {
   height: 100%;
@@ -28,7 +27,6 @@ nav Link{
   display: flex;
   align-items: center;
   justify-content: center;
-  
 }
 
 .searchBox {
@@ -55,11 +53,24 @@ nav Link{
   justify-content: space-around;
   text-align: center;
 }
-.cartbtn {
-  background-color: orange;
+.cartSection {
+  border: 1px solid black;
+  color: white;
+  background-color: black;
   border-radius: 4px;
   display: flex;
   padding: 4px;
+  position: relative;
+}
+.cartLength {
+  position: absolute;
+  background-color: red;
+  color: black;
+  padding: 0px 3px;
+  border-radius: 6px;
+  text-align: center;
+  right: 8px;
+  top: 0px;
 }
 .login,
 .logout {
@@ -75,7 +86,7 @@ nav Link{
   width: 25px;
   cursor: pointer;
 }
-.icon:hover{
+.icon:hover {
   opacity: 0.6;
 }
 .rightSection p {
@@ -93,8 +104,8 @@ nav Link{
     left: 0px;
     width: 100%;
     z-index: 100;
-    background-color: white;
     padding: 25px 0;
+    background-color: white;
   }
   .searchBox {
     border: 2px solid lightgreen;
@@ -114,10 +125,15 @@ nav Link{
   }
   .rightSection p {
     font-size: 7px;
+  }.cartSection{
+    padding-bottom: 0px;
+  }
+  .cartLength{
+    right: 7px;
   }
 
   .icon {
-    height: 16px;
-    width: 16px;
+    height: 20px;
+    width: 20px;
   }
 }

@@ -1,8 +1,15 @@
-.searchNav {
+.searchContainer {
   height: fit-content;
   width: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
+  gap: 80px;
+}
+.searchNav {
+  height: fit-content;
+  width: 100%;
+  display: flex;
   justify-content: space-around;
 }
 .searchNav form {
@@ -13,11 +20,12 @@
   padding: 10px;
   gap: 10px;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   z-index: 300;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0px;
+  background-color: lightgreen;
 }
 .searchNav input {
   height: 80%;
@@ -31,9 +39,27 @@
 }
 .searchNav button {
   height: 70%;
-  width: 5%;
-  background-color: lightgreen;
-  border: none;
-  border-radius: 10px;
+  width: 80px;
+  background-color: black;
+  color: white;
+  border-radius: 20px;
   outline: none;
+  cursor: pointer;
+  border: none;
+}
+
+.backIcon {
+  height: 25px;
+  width: 25px;
+  cursor: pointer;
+}
+@media screen and (max-width: 500px ) {
+  .searchNav form{
+    height: 60px;
+    
+  }
+  .searchNav input{
+    font-size: 12px;
+  }
+  
 }

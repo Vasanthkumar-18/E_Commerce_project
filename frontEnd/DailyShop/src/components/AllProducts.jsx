@@ -29,7 +29,6 @@ const AllProducts = () => {
     getAllProducts();
   }, []);
 
-
   if (isLoad) {
     return (
       <div>
@@ -79,7 +78,7 @@ const AllProducts = () => {
         </div>
         {error && (
           <center>
-            <h2 style={{ marginBottom: "200px" }}>{error}</h2>
+            <h2 style={{ marginBottom: "200px" }}> Server Error</h2>
           </center>
         )}
       </>

@@ -56,15 +56,15 @@
 }
 @media screen and (min-width: 375px) and (max-width: 540px) {
   .carousel {
-    height: 88px;
+    height: 75px;
     top: 70px;
-    margin-top: 40px;
+    margin-top: 30px;
     margin-bottom: 60px;
     width: 100%;
   }
   .prev,
   .next {
-    padding: 3px 6px;
+    padding: 3px 3px;
   }
 }
 @media screen and (max-width: 374px) {

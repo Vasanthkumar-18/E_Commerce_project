@@ -1,14 +1,16 @@
-import React, { useRef } from "react";
+import React from "react";
 import CartBtn from "./cartBtn";
 import { IoMdContact } from "react-icons/io";
 import { CiLogin } from "react-icons/ci";
 import { IoSearchOutline } from "react-icons/io5";
 import "./css/Nav.css";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Nav = () => {
   const navigate = useNavigate();
 
+  const cartProducts = useSelector((state) => state.cart);
 
   return (
     <nav>
@@ -25,7 +27,10 @@ const Nav = () => {
         />
       </div>
       <div className="rightSection">
-        <CartBtn />
+        <div className="cartSection">
+          <CartBtn />
+          <p className="cartLength">{cartProducts.length}</p>
+        </div>
 
         <div className="login">
           <IoMdContact className="icon" />
