@@ -3,14 +3,16 @@ import Carousels from "./Carousels";
 import { OrbitProgress } from "react-loading-indicators";
 import { useNavigate, Link } from "react-router-dom";
 import "./css/AllProducts.css";
-import { useSelector } from "react-redux";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const AllProducts = () => {
   const [product, setProduct] = useState([]);
-  const [filterProduct, setFilterProduct] = useState();
   const [isLoad, setIsLoad] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const { token } = useSelector((state) => state.auth);
 
   const getAllProducts = async () => {
     await axios
@@ -26,8 +28,12 @@ const AllProducts = () => {
       });
   };
   useEffect(() => {
-    getAllProducts();
-  }, []);
+    if (!token) {
+      navigate("/");
+    } else {
+      getAllProducts();
+    }
+  }, [navigate, token]);
 
   if (isLoad) {
     return (
@@ -63,12 +69,12 @@ const AllProducts = () => {
                     <p>
                       MRP : <span>₹</span> {product.price}
                     </p>
-                    <Link
+                    <button
                       className="viewDetailbtn"
-                      to={"/product/" + product.id}
+                      onClick={() => navigate(`/product/${product.id}`)}
                     >
                       view Details
-                    </Link>
+                    </button>
                   </div>
                 );
               } else {

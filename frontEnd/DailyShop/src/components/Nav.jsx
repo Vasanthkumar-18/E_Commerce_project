@@ -1,21 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CartBtn from "./cartBtn";
 import { IoMdContact } from "react-icons/io";
 import { CiLogin } from "react-icons/ci";
 import { IoSearchOutline } from "react-icons/io5";
 import "./css/Nav.css";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { CiLogout } from "react-icons/ci";
+import { FaCaretDown, FaCaretUp } from "react-icons/fa";
+import { logout } from "../redux/slice/Auth";
+import axios from "axios";
 
 const Nav = () => {
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.auth);
 
+  const [user, setUser] = useState("");
   const cartProducts = useSelector((state) => state.cart);
+  const handleLogOut = () => {
+    dispatch(logout());
+    navigate("/");
+  };
 
+  const getUserName = async () => {
+    await axios
+      .get("http://localhost:4000/profile", {
+        headers: { Authorization: token },
+      })
+      .then((res) => setUser(res.data))
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    } else {
+      getUserName();
+    }
+  }, [navigate, token]);
   return (
     <nav>
       <div className="logo">
-        <h4 onClick={() => navigate("/")}>Daily Shop</h4>
+        <h4 onClick={() => navigate("/home")}>Daily Shop</h4>
+        <p>{user && user}</p>
       </div>
       <div className="serachsection">
         <IoSearchOutline className="searchIcon" />
@@ -32,13 +61,31 @@ const Nav = () => {
           <p className="cartLength">{cartProducts.length}</p>
         </div>
 
-        <div className="login">
-          <IoMdContact className="icon" />
-          <p>Register</p>
-        </div>
-        <div className="logout">
-          <CiLogin className="icon" />
-          <p>Logout</p>
+        <div className="profile">
+          <button className="dropdownBtn" onClick={() => setIsOpen(!isOpen)}>
+            Profile {isOpen ? <FaCaretUp /> : <FaCaretDown />}
+          </button>
+          {isOpen && (
+            <ul className="dropdown">
+              <li>
+                <IoMdContact
+                  className="icon"
+                  onClick={() => navigate("/register")}
+                />
+                <p>Register</p>
+              </li>
+              <hr />
+              <li>
+                <CiLogin className="icon" onClick={() => navigate("/")} />
+                <p>Login</p>
+              </li>
+              <hr />
+              <li>
+                <CiLogout className="icon" onClick={handleLogOut} />
+                <p>Logout</p>
+              </li>
+            </ul>
+          )}
         </div>
       </div>
     </nav>

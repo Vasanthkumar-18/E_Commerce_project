@@ -3,20 +3,30 @@ import pg from "pg";
 import env from "dotenv";
 import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
-// import GoogleStrategy from "passport-google-oauth";
-// import passport from "passport";
 import cors from "cors";
-
+import jwt from "jsonwebtoken";
 const app = express();
 const port = 4000;
 app.use(
   cors({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
   })
 );
 env.config();
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+
+// app.use(
+//   session({
+//     secret: process.env.SECRET_SESSSION,
+//     resave: false,
+//     saveUninitialized: true,
+//   })
+// );
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 const saltRound = 10;
 const db = new pg.Client({
@@ -27,8 +37,6 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
 });
 db.connect();
-app.use(express.json());
-// PRODUCTS SERVER RESPONSE
 
 app.get("/products", async (req, res) => {
   try {
@@ -37,7 +45,6 @@ app.get("/products", async (req, res) => {
       res.json(result.rows);
     }
   } catch (err) {
-    // console.log(err.message);
     res.status(500).json({ error: "SERVER ERROR" });
   }
 });
@@ -85,6 +92,21 @@ app.post("/products", async (req, res) => {
   } catch (err) {
     // console.log(err.stack);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.post("/search/product", async (req, res) => {
+  try {
+    const query = req.body.query;
+
+    const result = await db.query(
+      "SELECT * FROM products WHERE title ILIKE $1",
+      [`%${query}%`]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: "Error Searching Products" });
   }
 });
 
@@ -150,7 +172,24 @@ app.delete("/products/:id", async (req, res) => {
 
 // USERS SERVER RESPONSE
 
-app.post("/user/register", async (req, res) => {
+const secretKey = process.env.SECRET_KEY_JWT;
+
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization;
+  if (token) {
+    try {
+      const verified = jwt.verify(token, secretKey);
+      req.user = verified;
+      next();
+    } catch (err) {
+      res.status(400).send("Invalid Token");
+    }
+  } else {
+    return res.status(401).send("Request Denied");
+  }
+};
+
+app.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (name && email && password) {
@@ -161,18 +200,13 @@ app.post("/user/register", async (req, res) => {
       if (checkEmail.rows.length > 0) {
         res.status(404).json({ message: "User Email already Exists" });
       } else {
-        // Password Hashing
-        bcrypt.hash(password, saltRound, async (err, hash) => {
-          if (err) {
-            console.log("Error Hashing password :", err);
-          } else {
-            const registerUser = await db.query(
-              "INSERT INTO users (name, email, password) VALUES ( $1, $2, $3 ) ",
-              [name, email, hash]
-            );
-            res.status(201).json("User Created Successfully");
-          }
-        });
+        const hashPassword = await bcrypt.hash(password, saltRound);
+
+        await db.query(
+          "INSERT INTO users (name, email, password) VALUES ( $1, $2, $3 ) ",
+          [name, email, hashPassword]
+        );
+        res.status(201).json("User Created Successfully");
       }
     } else {
       res.status(404).json({ error: "some detail Required" });
@@ -182,7 +216,7 @@ app.post("/user/register", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-app.post("/user/login", async (req, res) => {
+app.post("/login", async (req, res) => {
   try {
     const { email, loginPassword } = req.body;
     if (email && loginPassword) {
@@ -192,93 +226,115 @@ app.post("/user/login", async (req, res) => {
       );
       if (checkUserDetails.rows.length > 0) {
         const user = checkUserDetails.rows[0];
-
         const storedHashedPassword = user.password;
 
-        bcrypt.compare(loginPassword, storedHashedPassword, (err, result) => {
-          if (err) {
-            console.log("Error Comparing Password :", err);
-          } else {
-            if (result) {
-              res
-                .status(200)
-                .json({ message: " Welcome to Ecommerce Website" });
-            } else {
-              res.status(404).json({ error: " password Wrong" });
-            }
-          }
-        });
+        const validPassword = await bcrypt.compare(
+          loginPassword,
+          storedHashedPassword
+        );
+        console.log(validPassword);
+
+        if (validPassword) {
+          const token = jwt.sign(
+            { clientName: user.name, email: user.email },
+            secretKey,
+            { expiresIn: "5H" }
+          );
+          res.send({ token });
+          console.log(token);
+        } else {
+          return res.status(400).send("Invalid Password");
+        }
       } else {
-        res.status(404).json({ error: "email is not found" });
+        return res.status(404).json({ error: "email is not found" });
       }
+      return;
     } else {
-      res.status(404).json({ error: "email & passsword Required" });
+      return res.status(404).json({ error: "email & passsword Required" });
     }
   } catch (err) {
     console.log(err.stack);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.get("/profile", verifyToken, (req, res) => {
+  res.send(`Welcome ${req.user.clientName} `);
+});
+// admin page
+app.post("/admin/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    if (name && email && password) {
+      const checkEmail = await db.query(
+        "SELECT * FROM users WHERE email = $1",
+        [email]
+      );
+      if (checkEmail.rows.length > 0) {
+        res.status(404).json({ message: "User Email already Exists" });
+      } else {
+        const hashPassword = await bcrypt.hash(password, saltRound);
+
+        await db.query(
+          "INSERT INTO users (name, email, password) VALUES ( $1, $2, $3 ) ",
+          [name, email, hashPassword]
+        );
+        res.status(201).json("User Created Successfully");
+      }
+    } else {
+      res.status(404).json({ error: "some detail Required" });
+    }
+  } catch (err) {
+    console.error(err.stack);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-// auth google
-// app.get("/auth/google", passport.authenticate("google", {
-//   scope : ["profile", "email"],
-// }));
-// app.get("/auth/google/secrets" , passport.authenticate("google", {
-//   // successRedirect : "",
-//   // failureRedirect : ""
-// }));
+app.post("/admin/login", async (req, res) => {
+  try {
+    const { email, loginPassword } = req.body;
+    if (email && loginPassword) {
+      const checkUserDetails = await db.query(
+        "SELECT * FROM users WHERE email = $1",
+        [email]
+      );
+      if (checkUserDetails.rows.length > 0) {
+        const user = checkUserDetails.rows[0];
+        const storedHashedPassword = user.password;
 
+        const validPassword = await bcrypt.compare(
+          loginPassword,
+          storedHashedPassword
+        );
+        console.log(validPassword);
+
+        if (validPassword) {
+          const token = jwt.sign(
+            { clientName: user.name, email: user.email },
+            secretKey,
+            { expiresIn: "5H" }
+          );
+          res.send({ token });
+          console.log(token);
+        } else {
+          return res.status(400).send("Invalid Password");
+        }
+      } else {
+        return res.status(404).json({ error: "email is not found" });
+      }
+      return;
+    } else {
+      return res.status(404).json({ error: "email & passsword Required" });
+    }
+  } catch (err) {
+    console.log(err.stack);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.get("/", (req, res) => {
   res.send("<h1> THIS IS SERVER SIDE LOGICS</h1>");
 });
-app.post("/search/product", async (req, res) => {
-  try {
-    const query = req.body.query;
-
-    const result = await db.query(
-      "SELECT * FROM products WHERE title ILIKE $1",
-      [`%${query}%`]
-    );
-    console.log(result.rows);
-
-    res.json(result.rows);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: "Error Searching Products" });
-  }
-});
-// passport.use(
-//   "google",
-//    new GoogleStrategy(
-//     {
-//       clientId: process.env.OAUTH_CLIENT_ID,
-//       clientSecret: process.env.OAUTH_CLIENT_SECRET,
-//       callbackURL: "http://localhost:4000/auth/google/secrets",
-//       useProfileURL: "http://www.googleapis.com/oauth2/v3/userinfo",
-//     },
-//     async (accessToken, refreshToken, profile, cb) => {
-//       try{
-//         const result = await db.query("SELECT * FROM users WHERE email = $1", [profile.email]);
-//         if(result.rows.length > 0 ){
-//           // res.status(404).json({ error : "user email already exists"});
-//           cb (null, result.rows[0])
-//         } else{
-//           const newUser = await db.query("INSERT INTO users (email, password) VALUES ($1, $2)", [profile.email, "google"]);
-//           cb (null , newUser.rows[0])
-//         }
-//       } catch (err) {
-
-//         // res.send(500).json({error : "SERVER ERROR "})
-//         cb(err)
-
-//       }
-//     }
-//   )
-// );
-
 
 app.all("*", (req, res) => {
-  res.status(404).json({ error: "Route not found or Page not found" });
+  res.status(404).json({ error: "  Page not found" });
 });
 app.listen(port, () => {
   console.log(`The Server running port is ${port}/`);

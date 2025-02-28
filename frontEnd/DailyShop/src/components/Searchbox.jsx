@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import "./css/AllProducts.css";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import "./css/Searchbox.css";
+import { useSelector } from "react-redux";
+
 const Searchbox = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [isLoad, setIsLoad] = useState(true);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-
+  const { token } = useSelector((state) => state.auth);
   const handleSearch = async (e) => {
     e.preventDefault();
     console.log("search query", searchQuery);
@@ -23,11 +24,14 @@ const Searchbox = () => {
         .finally(() => {
           setIsLoad(false);
         });
-      console.log("response", response.data);
+      if(!token){
+        navigate("/")
+      }else{
       setSearchResult(response.data);
+      }
+
     } catch (err) {
       console.log(err.message);
-      setError(err.message);
     }
   };
 
@@ -35,7 +39,10 @@ const Searchbox = () => {
     <div className="searchContainer">
       <div className="searchNav">
         <form onSubmit={handleSearch}>
-          <IoMdArrowBack className="backIcon" onClick={()=> navigate("/")}/>
+          <IoMdArrowBack
+            className="backIcon"
+            onClick={() => navigate("/home")}
+          />
           <input
             type="search"
             value={searchQuery}
@@ -69,12 +76,19 @@ const Searchbox = () => {
                     <p>
                       MRP : <span>₹</span> {product.price}
                     </p>
-                    <Link
+
+                    <button
                       className="viewDetailbtn"
-                      to={"/product/" + product.id}
+                      onClick={() => navigate(`/product/${product.id}`)}
                     >
                       view Details
-                    </Link>
+                    </button>
+                    {/* <Link
+                          className="viewDetailbtn"
+                          to={"/product/" + product.id}
+                        >
+                          view Details
+                        </Link> */}
                   </div>
                 );
               } else {
