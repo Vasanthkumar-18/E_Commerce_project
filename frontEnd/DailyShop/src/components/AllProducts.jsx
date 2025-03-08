@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Carousels from "./Carousels";
 import { OrbitProgress } from "react-loading-indicators";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./css/AllProducts.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -16,7 +16,7 @@ const AllProducts = () => {
 
   const getAllProducts = async () => {
     await axios
-      .get("http://localhost:4000/products/")
+      .get(`${import.meta.env.VITE_API_URL}/products`)
       .then((details) => {
         setProduct(details.data);
       })
@@ -59,10 +59,10 @@ const AllProducts = () => {
         <Carousels />
         <div className="productContainer">
           {product &&
-            product.map((product, index) => {
+            product.map((product) => {
               if (product) {
                 return (
-                  <div className="cart" key={index}>
+                  <div className="cart" key={product.id}>
                     <img src={product.image_url} alt="productImages" />
                     <hr />
                     <p>{product.title}</p>

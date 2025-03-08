@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import "./css/AllProducts.css";
 import { useNavigate } from "react-router-dom";
@@ -7,29 +7,28 @@ import "./css/Searchbox.css";
 import { useSelector } from "react-redux";
 
 const Searchbox = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [isLoad, setIsLoad] = useState(true);
   const navigate = useNavigate();
+  const searchRef = useRef();
 
   const { token } = useSelector((state) => state.auth);
   const handleSearch = async (e) => {
     e.preventDefault();
-    console.log("search query", searchQuery);
+    const searchValue = searchRef.current.value.trim();
     try {
       const response = await axios
-        .post("http://localhost:4000/search/product", {
-          query: searchQuery,
+        .post(`${import.meta.env.VITE_API_URL}/search/product`, {
+          query: searchValue,
         })
         .finally(() => {
           setIsLoad(false);
         });
-      if(!token){
-        navigate("/")
-      }else{
-      setSearchResult(response.data);
+      if (!token) {
+        navigate("/");
+      } else {
+        setSearchResult(response.data);
       }
-
     } catch (err) {
       console.log(err.message);
     }
@@ -45,9 +44,8 @@ const Searchbox = () => {
           />
           <input
             type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search Laptop, Iphone, Tv, Camera........"
+            ref={searchRef}
+            placeholder="Search Iphone Sony Headset........"
           />
           <button type="submit">Search</button>
         </form>
@@ -65,11 +63,11 @@ const Searchbox = () => {
         </div>
       ) : (
         <div className="productContainer">
-          {searchResult &&
-            searchResult.map((product, index) => {
+          {searchResult.length > 0 ? (
+            searchResult.map((product) => {
               if (product) {
                 return (
-                  <div className="cart" key={index}>
+                  <div className="cart" key={product.id}>
                     <img src={product.image_url} alt="productImages" />
                     <hr />
                     <p>{product.title}</p>
@@ -83,18 +81,15 @@ const Searchbox = () => {
                     >
                       view Details
                     </button>
-                    {/* <Link
-                          className="viewDetailbtn"
-                          to={"/product/" + product.id}
-                        >
-                          view Details
-                        </Link> */}
                   </div>
                 );
               } else {
                 return "Internal Server Error";
               }
-            })}
+            })
+          ) : (
+            <p> No Items Left</p>
+          )}
         </div>
       )}
     </div>

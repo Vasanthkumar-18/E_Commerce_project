@@ -20,7 +20,7 @@
 
 .part1 img {
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   height: 90%;
   padding: 5x;
   transition-duration: 1s;

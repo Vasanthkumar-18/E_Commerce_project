@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
     token: localStorage.getItem("token") || null,
+    userEmail: "",
   },
   reducers: {
     loginSuccess(state, action) {
@@ -18,7 +18,11 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.removeItem("token");
     },
+    getUserEmail(state, action) {
+      state.userEmail = action.payload;
+    },
   },
 });
+
 export default authSlice.reducer;
-export let { loginSuccess, logout } = authSlice.actions;
+export let { loginSuccess, logout, getUserEmail } = authSlice.actions;

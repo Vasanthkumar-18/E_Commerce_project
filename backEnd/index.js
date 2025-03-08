@@ -42,7 +42,7 @@ app.get("/products", async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM products ORDER BY id ASC");
     if (result) {
-      res.json(result.rows);
+      res.status(200).json(result.rows);
     }
   } catch (err) {
     res.status(500).json({ error: "SERVER ERROR" });
@@ -182,10 +182,10 @@ const verifyToken = (req, res, next) => {
       req.user = verified;
       next();
     } catch (err) {
-      res.status(400).send("Invalid Token");
+      res.status(400).json({ error: "Invalid Token" });
     }
   } else {
-    return res.status(401).send("Request Denied");
+    return res.status(401).json({ error: "Request Denied" });
   }
 };
 
@@ -210,6 +210,75 @@ app.post("/register", async (req, res) => {
       }
     } else {
       res.status(404).json({ error: "some detail Required" });
+    }
+  } catch (err) {
+    console.error(err.stack);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// User Address
+app.post("/user/address", async (req, res) => {
+  try {
+    const { addressname, email, mobileno, pincode, states, address, landmark } =
+      req.body;
+    console.log("name :", addressname);
+    console.log("email :", email);
+    console.log("mobile no :", mobileno);
+    console.log("picode :", pincode);
+    console.log("state :", states);
+    console.log("address :", address);
+    console.log("lanmark :", landmark);
+
+    if (
+      email &&
+      addressname &&
+      mobileno &&
+      pincode &&
+      states &&
+      address &&
+      landmark
+    ) {
+      const checkEmail = await db.query(
+        "SELECT * FROM users WHERE email = $1",
+        [email]
+      );
+      if (checkEmail.rows.length > 0) {
+        await db.query(
+          "UPDATE users SET addressname = $1, mobilenum = $2, pincode = $3, states = $4, address = $5, landmark = $6 WHERE email = $7 ",
+          [addressname, mobileno, pincode, states, address, landmark, email]
+        );
+        res.status(200).json({ success: "Address Added SucessFul" });
+      } else {
+        res.status(404).json({ error: " User Not Found" });
+      }
+    } else {
+      res.status(404).json({ error: " Some  Data Requried" });
+    }
+  } catch (err) {
+    console.error(err.stack);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/user/address", async (req, res) => {
+  try {
+    const { email } = req.query;
+    console.log("Received email:", email);
+
+    const checkUserAddress = await db.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+    if (checkUserAddress.rows.length > 0) {
+      const userAddress = await db.query(
+        " SELECT * FROM users  WHERE email = $1",
+        [email]
+      );
+
+      res.json({ address: userAddress.rows[0] });
+    } else {
+      res.status(404).json({ error: "User Not Found" });
     }
   } catch (err) {
     console.error(err.stack);
@@ -243,7 +312,7 @@ app.post("/login", async (req, res) => {
           res.send({ token });
           console.log(token);
         } else {
-          return res.status(400).send("Invalid Password");
+          return res.status(400).json({ error: "Invalid Password" });
         }
       } else {
         return res.status(404).json({ error: "email is not found" });
@@ -260,75 +329,7 @@ app.post("/login", async (req, res) => {
 app.get("/profile", verifyToken, (req, res) => {
   res.send(`Welcome ${req.user.clientName} `);
 });
-// admin page
-app.post("/admin/register", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    if (name && email && password) {
-      const checkEmail = await db.query(
-        "SELECT * FROM users WHERE email = $1",
-        [email]
-      );
-      if (checkEmail.rows.length > 0) {
-        res.status(404).json({ message: "User Email already Exists" });
-      } else {
-        const hashPassword = await bcrypt.hash(password, saltRound);
 
-        await db.query(
-          "INSERT INTO users (name, email, password) VALUES ( $1, $2, $3 ) ",
-          [name, email, hashPassword]
-        );
-        res.status(201).json("User Created Successfully");
-      }
-    } else {
-      res.status(404).json({ error: "some detail Required" });
-    }
-  } catch (err) {
-    console.error(err.stack);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-app.post("/admin/login", async (req, res) => {
-  try {
-    const { email, loginPassword } = req.body;
-    if (email && loginPassword) {
-      const checkUserDetails = await db.query(
-        "SELECT * FROM users WHERE email = $1",
-        [email]
-      );
-      if (checkUserDetails.rows.length > 0) {
-        const user = checkUserDetails.rows[0];
-        const storedHashedPassword = user.password;
-
-        const validPassword = await bcrypt.compare(
-          loginPassword,
-          storedHashedPassword
-        );
-        console.log(validPassword);
-
-        if (validPassword) {
-          const token = jwt.sign(
-            { clientName: user.name, email: user.email },
-            secretKey,
-            { expiresIn: "5H" }
-          );
-          res.send({ token });
-          console.log(token);
-        } else {
-          return res.status(400).send("Invalid Password");
-        }
-      } else {
-        return res.status(404).json({ error: "email is not found" });
-      }
-      return;
-    } else {
-      return res.status(404).json({ error: "email & passsword Required" });
-    }
-  } catch (err) {
-    console.log(err.stack);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 app.get("/", (req, res) => {
   res.send("<h1> THIS IS SERVER SIDE LOGICS</h1>");
 });

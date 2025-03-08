@@ -10,9 +10,8 @@ const Footer = () => {
 
   return (
     <footer>
+      <Nav />
 
-      <Nav/>
-      
       <div className="footer-container">
         <div className="footer1">
           <h3>ABOUT US</h3>
@@ -35,13 +34,13 @@ const Footer = () => {
           <h3>FOLLOW US</h3>
 
           <div className="icons">
-            <a href="#" style={{ color: "pink" }}>
+            <a style={{ color: "pink" }}>
               <CiInstagram className="ficon" />
             </a>
-            <a href="#">
+            <a>
               <AiOutlineFacebook className="ficon" style={{ color: "blue" }} />
             </a>
-            <a href="#">
+            <a>
               <FaTwitter className="ficon" style={{ color: "blue" }} />
             </a>
           </div>

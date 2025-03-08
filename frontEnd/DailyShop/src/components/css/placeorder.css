@@ -1,0 +1,230 @@
+.placeorderNav {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  width: 95%;
+  margin: auto;
+  background-color: rgb(226, 223, 223);
+}
+.backIcons {
+  gap: 10px;
+  display: flex;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.placeorderContainer {
+  display: flex;
+  justify-content: space-around;
+  width: 95%;
+  height: fit-content;
+  margin: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  padding: 1.5rem;
+  align-items: center;
+}
+.section1 {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  gap: 1rem;
+  height: fit-content;
+}
+.section1 tr,
+table,
+tbody,
+td {
+  width: 100%;
+}
+.section1 form {
+  width: 100%;
+  height: fit-content;
+  padding: 20px;
+  gap: 15px;
+  font-size: 20px;
+  border-radius: 10px;
+}
+.section1 form input {
+  padding: 5px;
+  width: 100%;
+  font-size: 18px;
+  height: 50px;
+}
+.cashOnDelivery {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.payment {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  padding: 1rem;
+  text-align: justify;
+  border-radius: 10px;
+}
+.section2 {
+  display: flex;
+  flex-direction: column;
+  width: 35%;
+  height: fit-content;
+  gap: 1rem;
+}
+.orderProducts {
+  width: 90%;
+  height: fit-content;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  gap: 10px;
+}
+.orderSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  padding: 1rem;
+}
+
+.productContent {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  height: fit-content;
+  gap: 10px;
+  padding: 1rem;
+}
+.productContent img {
+  height: 100px;
+  width: 100px;
+  object-fit: contain;
+}
+
+.placeorderContainer button {
+  background-color: orange;
+  border-radius: 1rem;
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+  outline: none;
+}
+.addressDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 1rem;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+.getUserEmail input {
+  padding: 10px;
+  width: 50%;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  outline: none;
+}
+.userAddressDetails {
+  width: 100%;
+  text-align: justify;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.userAddressDetails input,
+.payment input {
+  margin-right: 10px;
+  outline: none;
+}
+
+.orderMessageContainer {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  gap: 20px;
+  padding: 1rem;
+
+  justify-content: space-around;
+  overflow: hidden;
+}
+.orderTruck {
+  width: 100%;
+  position: relative;
+  display: flex;
+  height: 50px;
+  padding: 5px;
+  background-color: black;
+}
+.deliverTruck {
+  position: absolute;
+  font-size: 50px;
+  animation: truckMove 3s ease-in-out infinite;
+  color: white;
+  bottom: 0px;
+  left: 0px;
+  /* background-color: aqua; */
+}
+.truckLine {
+  height: 1px;
+  width: 100%;
+  background-color: white;
+  position: absolute;
+  bottom: 3px;
+}
+@keyframes truckMove {
+  from {
+    transform: translateX(-90%);
+  }
+  to {
+    transform: translateX(900%);
+  }
+}
+@media screen and (max-width: 550px) {
+  .placeorderContainer {
+    padding: 5px;
+    gap: 5px;
+  }
+  .placeorderContainer p,
+  h3,
+  h4 {
+    font-size: 10px;
+  }
+  .deliverTruck {
+    font-size: 25px;
+  }
+  .addressDetails,
+  .payment {
+    padding: 7px;
+  }
+  .orderSummary {
+    gap: 8px;
+  }
+  .orederMessageContainer {
+    padding: 5px;
+  }
+  .section1 {
+    width: 48%;
+  }
+  .section2 {
+    width: 48%;
+  }
+  .productContent img {
+    height: 40px;
+    width: 40px;
+  }
+}

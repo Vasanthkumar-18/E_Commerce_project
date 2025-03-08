@@ -26,7 +26,7 @@ const Nav = () => {
 
   const getUserName = async () => {
     await axios
-      .get("http://localhost:4000/profile", {
+      .get(`${import.meta.env.VITE_API_URL}/profile`, {
         headers: { Authorization: token },
       })
       .then((res) => setUser(res.data))

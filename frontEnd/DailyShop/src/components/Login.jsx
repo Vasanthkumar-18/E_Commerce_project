@@ -1,80 +1,82 @@
-import React, { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+import React, { useRef } from "react";
+// import { FcGoogle } from "react-icons/fc";
 import { TextField, Button } from "@mui/material";
 import "./css/login.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../redux/slice/Auth";
+import { getUserEmail, loginSuccess } from "../redux/slice/Auth";
 
 const Login = () => {
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogin = async () => {
-    try {
-      const res = await axios
-        .post("http://localhost:4000/login", {
-          email: userEmail,
-          loginPassword: userPassword,
-        })
-        .then((res) => {
-          dispatch(loginSuccess(res.data));
+  const handleLogin = (e) => {
+    e.preventDefault();
 
-          Swal.fire({
-            icon: "success",
-            title: "Login Successful",
-            text: "Have a Nice Day!",
-          });
-          setUserEmail("");
-          setUserPassword("");
-          navigate("/home");
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Wrong password",
-          });
+    const userEmail = emailRef.current.value.trim();
+    const userPassword = passwordRef.current.value.trim();
+
+    axios
+      .post(`${import.meta.env.VITE_API_URL}/login`, {
+        email: userEmail,
+        loginPassword: userPassword,
+      })
+      .then((res) => {
+        dispatch(loginSuccess(res.data));
+        dispatch(getUserEmail(userEmail));
+
+        Swal.fire({
+          icon: "success",
+          title: "Login Successful",
+          text: "Have a Nice Day!",
         });
-    } catch (err) {
-      console.error("Error Response:", err);
 
-      console.log(err);
-    }
+        emailRef.current.value = "";
+        passwordRef.current.value = "";
+        navigate("/home");
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: "error",
+          title: "Wrong password",
+        });
+      });
   };
 
   return (
     <div className="loginContainer">
-      <form>
+      <form onSubmit={handleLogin}>
         <center>
           <h3>Login</h3>
         </center>
+        <p> sample : dailyshop@gmail.com </p>
+        <p>pass : dailyshop</p>
         <TextField
           type="email"
           label="Email"
           variant="outlined"
-          value={userEmail}
+          inputRef={emailRef}
           autoComplete="username"
-          onChange={(e) => setUserEmail(e.target.value)}
         />
         <TextField
-          label="password"
+          label="Password"
           variant="outlined"
-          autoComplete="password"
-          value={userPassword}
           type="password"
-          onChange={(e) => setUserPassword(e.target.value)}
+          inputRef={passwordRef}
+          autoComplete="current-password"
         />
-        <Button variant="contained" onClick={handleLogin}>
+        <Button variant="contained" type="submit">
           Login
         </Button>
         <div className="google-register">
-          <Button variant="outlined" className="google-btn">
+          {/* <Button variant="outlined" className="google-btn">
             <FcGoogle />
-          </Button>
+          </Button> */}
           <Button
             variant="contained"
             className="register-btn"

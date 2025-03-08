@@ -1,43 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { TextField, Button } from "@mui/material";
 import "./css/login.css";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [userEmail, setUserEmail] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userPassword, setUserPassword] = useState("");
+  const userNameRef = useRef(null);
+  const userEmailRef = useRef(null);
+  const userPasswordRef = useRef(null);
   const navigate = useNavigate();
-
-  const handleRegister = async () => {
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const userName = userNameRef.current?.value.trim();
+    const userEmail = userEmailRef.current?.value.trim();
+    const userPassword = userPasswordRef.current?.value.trim();
     try {
-      const res = await axios
-        .post("http://localhost:4000/register", {
-          name: userName,
-          email: userEmail,
-          password: userPassword,
-        })
-        .then((res) => {
-          Swal.fire({
-            icon: "success",
-            title: "Registration Successful",
-            text: res.data,
-          });
-          setUserName("");
-          setUserEmail("");
-          setUserPassword("");
-          navigate("/login");
-        })
-        .catch((err) =>
-          Swal.fire({
-            icon: "error",
-            title: "Registration Failed",
-            text: "Please Try Again",
-          })
-        );
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/register`, {
+        name: userName,
+        email: userEmail,
+        password: userPassword,
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Registration Successful",
+        text: res.data,
+      });
+      userNameRef.current.value = "";
+      userEmailRef.current.value = "";
+      userPasswordRef.current.value = "";
+      navigate("/");
     } catch (err) {
       console.error("Error Response:", err);
     }
@@ -45,7 +39,7 @@ const Register = () => {
 
   return (
     <div className="loginContainer">
-      <form>
+      <form onSubmit={handleRegister}>
         <center>
           <h3>Register</h3>
         </center>
@@ -53,36 +47,32 @@ const Register = () => {
           type="text"
           label="Name"
           variant="outlined"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
+          inputRef={userNameRef}
         />
         <TextField
           type="email"
           label="Email"
           variant="outlined"
           autoComplete="username"
-          value={userEmail}
-          onChange={(e) => setUserEmail(e.target.value)}
+          inputRef={userEmailRef}
         />
         <TextField
           type="password"
           label="password"
           variant="outlined"
-          value={userPassword}
-          autoComplete="current-password"
-          onChange={(e) => setUserPassword(e.target.value)}
+          inputRef={userPasswordRef}
         />
-        <Button variant="contained" onClick={handleRegister}>
+        <Button variant="contained" type="submit">
           Submit
         </Button>
         <div className="google-register">
-          <Button variant="outlined" className="google-btn">
+          {/* <Button variant="outlined" className="google-btn">
             <FcGoogle />
-          </Button>
+          </Button> */}
           <Button
             variant="contained"
             className="register-btn"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/")}
           >
             Login
           </Button>

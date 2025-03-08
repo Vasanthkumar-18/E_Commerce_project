@@ -1,0 +1,90 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f1f1f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.road {
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
+  height: 10px;
+  background: #333;
+}
+
+.truck {
+  position: absolute;
+  bottom: 60px;
+  left: -200px;
+  animation: truckMove 5s linear infinite;
+}
+
+.truck-body {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.truck-cabin {
+  width: 50px;
+  height: 40px;
+  background: red;
+  border-radius: 5px;
+}
+
+.truck-container {
+  width: 100px;
+  height: 50px;
+  background: blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.wheels {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  bottom: -10px;
+  width: 120px;
+}
+
+.wheel {
+  width: 20px;
+  height: 20px;
+  background: black;
+  border-radius: 50%;
+  animation: wheelSpin 1s linear infinite;
+}
+
+@keyframes truckMove {
+  0% {
+    left: -200px;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes wheelSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
