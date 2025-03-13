@@ -62,9 +62,9 @@
   }
   .cart {
     width: 160px;
-    padding: 15px
+    padding: 15px;
   }
-    .cart img {
+  .cart img {
     height: fit-content;
     object-fit: contain;
     height: 50px;
@@ -73,7 +73,6 @@
     padding: 1px 5px;
     font-size: 15px;
   }
-  
 }
 
 @media screen and (max-width: 425px) {
@@ -84,8 +83,10 @@
     justify-content: space-around;
   }
   .cart {
-    width: 90px;
-    padding: 3px;
+    margin-top: 20px;
+
+    width: 100px;
+    padding: 10px; 
   }
   .cart img {
     height: fit-content;

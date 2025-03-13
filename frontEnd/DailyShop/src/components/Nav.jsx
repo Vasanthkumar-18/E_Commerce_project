@@ -44,7 +44,7 @@ const Nav = () => {
     <nav>
       <div className="logo">
         <h4 onClick={() => navigate("/home")}>Daily Shop</h4>
-        <p>{user && user}</p>
+        <p onClick={() => navigate("/home")}>{user && user}</p>
       </div>
       <div className="serachsection">
         <IoSearchOutline className="searchIcon" />
