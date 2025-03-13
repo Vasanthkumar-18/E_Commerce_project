@@ -27,19 +27,51 @@
   width: 100px;
 }
 .register-btn {
-  width: 100px;
+  width: 100%;
   font-size: 12px;
-  height: 30px;
+  height: 40px;
 }
-@media screen and (max-width: 400px ) {
+.spinner {
+  height: 20px;
+  width: 20px;
+  border: 3px solid black;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+.sampleLoginDetails {
+  padding: 3px;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
-
-.loginContainer form{
-  width: 270px;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-.loginContainer input{
-  /* padding: px; */
-  font-size: 16px;
-  height: 14px;
-}
+@media screen and (max-width: 400px) {
+  .loginContainer form {
+    width: 270px;
+  }
+  .loginContainer input {
+    /* padding: px; */
+    font-size: 16px;
+    height: 13px;
+  }
+  .sampleLoginDetails {
+  }
+  .sampleLoginDetails p {
+    font-size: 12px;
+  }
+  .register-btn {
+    height: 30px;
+  }
 }

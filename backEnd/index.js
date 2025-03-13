@@ -7,14 +7,16 @@ import cors from "cors";
 import jwt from "jsonwebtoken";
 const app = express();
 const port = 4000;
+env.config();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    // origin: "http://localhost:5173",
+    origin: process.env.FRONT_END_URL,
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true,
   })
 );
-env.config();
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -29,14 +31,18 @@ app.use(express.json());
 // app.use(passport.session());
 
 const saltRound = 10;
-const db = new pg.Client({
-  user: process.env.PG_USER,
-  password: process.env.PG_PASSWORD,
-  database: process.env.PG_DB,
-  host: process.env.PG_HOST,
-  port: process.env.PG_PORT,
+const { Pool } = pg;
+
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
-db.connect();
+
+db.connect()
+  .then(() => console.log("Connected to Railway PostgreSQL"))
+  .catch((err) => console.error(" Database connection error:", err.stack));
 
 app.get("/products", async (req, res) => {
   try {
