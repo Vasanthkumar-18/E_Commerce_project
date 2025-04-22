@@ -8,6 +8,7 @@ import Register from "./components/Register";
 import ProductDetails from "./components/ProductDetails";
 import Serachbox from "./components/Searchbox";
 import PlaceOrder from "./components/PlaceOrder";
+import Orders from "./components/Orders";
 
 const App = () => {
   return (
@@ -20,7 +21,8 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/search" element={<Serachbox />} />
-          <Route path="/placeorder" element={<PlaceOrder/>} />
+          <Route path="/placeorder" element={<PlaceOrder />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </Router>

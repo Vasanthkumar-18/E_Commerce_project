@@ -117,6 +117,21 @@ td {
   margin-top: 10px;
   cursor: pointer;
   outline: none;
+  /* width: 70px; */
+}
+.addresBtn{
+  width: 70px;
+  height: 30px;
+
+}
+.spinner1 {
+  height: 20px;
+  width: 20px;
+  border: 3px solid black;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
 }
 .addressDetails {
   display: flex;

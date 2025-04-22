@@ -1,0 +1,94 @@
+.OrdersContainer {
+  width: 100%;
+  height: fit-content;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.orders-nav {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  width: 100%;
+  margin: auto;
+  background-color: rgb(226, 223, 223);
+}
+.ordersChild {
+  display: flex;
+  width: 100%;
+  height: fit-content;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  padding: 5px;
+  align-items: center;
+}
+.orderChild1 {
+  display: flex;
+  width: 50%;
+  height: fit-content;
+  justify-content: space-around;
+  align-items: center;
+  gap: 10px;
+  padding: 4px;
+}
+.orderChild2 {
+  display: flex;
+  width: 50%;
+  height: fit-content;
+  justify-content: space-around;
+  align-items: center;
+}
+.orderChild1 img {
+  height: 100px;
+  width: 20%;
+  object-fit: contain;
+}
+.orderDescription {
+  width: 80%;
+  text-align: justify;
+}
+.orderQuantity {
+  display: flex;
+  justify-content: center;
+}
+.orderChild2 button {
+  width: 70px;
+  height: fit-content;
+  color: white;
+  background-color: rgb(230, 47, 47);
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  outline: none;
+}
+
+@media screen and (max-width: 600px) {
+  .OrdersContainer {
+    padding: 10px;
+  }
+  .ordersChild {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .orderChild1 {
+    width: 100%;
+  }
+  .orderDescription {
+    font-size: 14px;
+  }
+  .orderChild2 {
+    width: 100%;
+  }
+  .orderQuantity {
+    font-size: 12px;
+  }
+  .orderChild2 button {
+    width: 55px;
+    padding: 5px;
+  }
+}

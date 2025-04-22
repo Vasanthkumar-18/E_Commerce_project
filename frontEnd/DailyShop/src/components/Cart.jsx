@@ -10,8 +10,7 @@ import { MdDelete } from "react-icons/md";
 import { setCartProducts } from "../redux/slice/paymentSlice"; // Import Redux action
 
 const Cart = () => {
-  const cartProducts = useSelector((state) => state.cart);
-
+  const cartProducts = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
   const [count, setCount] = useState(
     cartProducts.reduce((acc, product) => ({ ...acc, [product.id]: 1 }), {})
@@ -34,7 +33,6 @@ const Cart = () => {
   let removeCart = (itemId) => {
     dispatch(removeItem(itemId));
   };
-
   const handleCheckOut = (product) => {
     const orderDetails = {
       productId: product.id,
@@ -42,11 +40,11 @@ const Cart = () => {
       quantity: count[product.id],
       totalPrice: count[product.id] * product.price,
       image_url: product.image_url,
+      description: product.description,
     };
 
     // Store only the selected product in Redux
-    dispatch(setCartProducts([orderDetails]));
-
+    dispatch(setCartProducts(orderDetails));
     navigate("/placeorder");
   };
   return (

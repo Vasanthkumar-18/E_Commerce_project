@@ -18,7 +18,7 @@ const Nav = () => {
   const { token } = useSelector((state) => state.auth);
 
   const [user, setUser] = useState("");
-  const cartProducts = useSelector((state) => state.cart);
+  const cartProducts = useSelector((state) => state.cart.cartItems);
   const handleLogOut = () => {
     dispatch(logout());
     navigate("/");
@@ -44,7 +44,7 @@ const Nav = () => {
     <nav>
       <div className="logo">
         <h4 onClick={() => navigate("/home")}>Daily Shop</h4>
-        <p onClick={() => navigate("/home")}>{user && user}</p>
+        <p>{user && user}</p>
       </div>
       <div className="serachsection">
         <IoSearchOutline className="searchIcon" />

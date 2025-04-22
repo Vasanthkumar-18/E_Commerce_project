@@ -11,9 +11,11 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const { id } = useParams();
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart);
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const { token } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  console.log(cartItems);
+
   // Fetch product details
   useEffect(() => {
     const getProduct = async () => {
@@ -34,7 +36,7 @@ const ProductDetails = () => {
   }, [id]);
 
   // Check if the product is already in the cart
-  const isInCart = cartItems.some((item) => item.id === product?.id);
+  const isInCart = product && cartItems.some((item) => item.id === product?.id);
 
   // Toggle Add/Remove from Cart
   const handleCartToggle = () => {
@@ -42,6 +44,7 @@ const ProductDetails = () => {
       dispatch(removeItem(product.id));
     } else {
       dispatch(addItem(product));
+      console.log(product);
     }
   };
 

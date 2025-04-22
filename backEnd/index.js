@@ -10,6 +10,7 @@ const port = 4000;
 env.config();
 app.use(
   cors({
+    // origin: "http://localhost:5173/",
     origin: process.env.FRONT_END_URL,
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true,
@@ -41,7 +42,7 @@ const db = new Pool({
 
 db.connect()
   .then(() => console.log("Connected to Railway PostgreSQL"))
-  .catch((err) => console.error(" Database connection error:", err.stack));
+  .catch((err) => console.error(" Database connection error :", err.stack));
 
 app.get("/products", async (req, res) => {
   try {
@@ -253,7 +254,7 @@ app.post("/user/address", async (req, res) => {
           "UPDATE users SET addressname = $1, mobilenum = $2, pincode = $3, states = $4, address = $5, landmark = $6 WHERE email = $7 ",
           [addressname, mobileno, pincode, states, address, landmark, email]
         );
-        res.status(200).json({ success: "Address Added SucessFul" });
+        res.status(200).json({ success: "Address Added SucessFully" });
       } else {
         res.status(404).json({ error: " User Not Found" });
       }
@@ -315,7 +316,6 @@ app.post("/login", async (req, res) => {
             { expiresIn: "5H" }
           );
           res.send({ token });
-          console.log(token);
         } else {
           return res.status(400).json({ error: "Invalid Password" });
         }
@@ -335,12 +335,66 @@ app.get("/profile", verifyToken, (req, res) => {
   res.send(`Welcome ${req.user.clientName} `);
 });
 
+// userOrdetails
+
+app.get("/orderlists/:email", async (req, res) => {
+  const userEmail = req.params.email;
+  try {
+    const result = await db.query(
+      "SELECT  users.id, users.email, orderDetails.id AS orderId,orderDetails.productDescription,orderDetails.quantity,orderDetails.productImage, orderDetails.price, orderDetails.status FROM users JOIN orderDetails ON users.email = orderDetails.userEmail WHERE users.email = $1   ORDER BY orderDetails.id;",
+      [userEmail]
+    );
+    if (result.rows.length > 0) {
+      res.json(result.rows);
+    } else {
+      res.status(404).send("No orders found for this user");
+    }
+  } catch (err) {
+    res.status(500).json({ error: "SERVER ERROR" });
+  }
+});
+app.post("/add/orderlist", async (req, res) => {
+  const { description, quantity, email, image, price } = req.body;
+
+  try {
+    const checkEmail = await db.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+    if (checkEmail.rows.length > 0) {
+      const query = `
+      INSERT INTO orderDetails (userEmail, productDescription, quantity, productImage, price)
+      VALUES ($1, $2, $3, $4, $5) RETURNING *;
+    `;
+      await db.query(query, [email, description, quantity, image, price]);
+
+      res.status(200).json({ success: " Product Added SucessFully" });
+    } else {
+      res.status(404).json({ error: " User Not Found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error inserting order details");
+  }
+});
+app.post("/cancel/order:id", async (req, res) => {
+  const orderId = req.params.id;
+  console.log(orderId);
+
+  try {
+    await db.query("UPDATE orderDetails SET status = false where ID = $1", [
+      orderId,
+    ]);
+    res.status(200).json({ success: " product Canceled" });
+  } catch (err) {
+    res.status(500).json({ error: "Order ID is Missing" });
+  }
+});
 app.get("/", (req, res) => {
   res.send("<h1> THIS IS SERVER SIDE LOGICS</h1>");
 });
 
 app.all("*", (req, res) => {
-  res.status(404).json({ error: "  Page not found" });
+  res.status(404).json({ error: " Page not found" });
 });
 app.listen(port, () => {
   console.log(`The Server running port is ${port}/`);
