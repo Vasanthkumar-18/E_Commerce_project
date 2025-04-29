@@ -4,9 +4,9 @@ import { GrPrevious } from "react-icons/gr";
 import "./css/Carousel.css"
 
 const images = [
-  "src/assets/images/image1.webp",
-  "src/assets/images/image2.webp",
-  "src/assets/images/imagw3.webp",
+  "/image1.webp",
+  "/image2.webp",
+  "/imagw3.webp",
 ];
 
 const Carousels = () => {

@@ -3,12 +3,15 @@ import "./css/Orders.css";
 import axios from "axios";
 import { OrbitProgress } from "react-loading-indicators";
 import Swal from "sweetalert2";
+import { IoIosHome } from "react-icons/io";
+import { IoMdArrowBack } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
   const getUserEmail = localStorage.getItem("email");
   const [userOrders, setuserOrders] = useState([]);
   const [isLoad, setIsLoad] = useState(true);
-
+  const navigate = useNavigate();
   console.log(getUserEmail);
   const usersOrderDetails = () =>
     axios
@@ -92,6 +95,16 @@ const Orders = () => {
       <div className="OrdersContainer">
         <div className="orders-nav">
           <h3> Orders Section</h3>
+          <div className="backIcons-orders">
+            <IoIosHome
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/home")}
+            />
+            <IoMdArrowBack
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/cart")}
+            />
+          </div>
         </div>
 
         {userOrders.length > 0 ? (

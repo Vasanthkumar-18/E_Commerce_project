@@ -17,6 +17,15 @@
   width: 100%;
   margin: auto;
   background-color: rgb(226, 223, 223);
+  position: relative;
+}
+.backIcons-orders {
+  position: absolute;
+  left: 10px;
+  width: 50px;
+  display: flex;
+  justify-content: space-between;
+
 }
 .ordersChild {
   display: flex;

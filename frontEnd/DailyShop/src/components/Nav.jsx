@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { CiLogout } from "react-icons/ci";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
+import { MdThumbsUpDown } from "react-icons/md";
 import { logout } from "../redux/slice/Auth";
 import axios from "axios";
 
@@ -44,7 +45,7 @@ const Nav = () => {
     <nav>
       <div className="logo">
         <h4 onClick={() => navigate("/home")}>Daily Shop</h4>
-        <p>{user && user}</p>
+        <p onClick={() => navigate("/home")}>{user && user}</p>
       </div>
       <div className="serachsection">
         <IoSearchOutline className="searchIcon" />
@@ -78,6 +79,14 @@ const Nav = () => {
               <li>
                 <CiLogin className="icon" onClick={() => navigate("/")} />
                 <p>Login</p>
+              </li>
+              <hr />
+              <li>
+                <MdThumbsUpDown
+                  className="icon"
+                  onClick={() => navigate("/orders")}
+                />
+                <p>Orders</p>
               </li>
               <hr />
               <li>
